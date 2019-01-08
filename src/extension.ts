@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
         { scheme: 'file', language: 'markdown' },
         new SlowCompletionProvider(),
-        '.',
+        '.', 't', 'o', 's', 't', 'r', 'i', 'n',
     ));
 }
 
@@ -34,6 +34,10 @@ class SlowCompletionProvider implements vscode.CompletionItemProvider {
         const completion = this.getCompletions(document.getText(), document.offsetAt(position));
         if (!completion)
             return;
+
+        console.log(`Got a replacement of ${completion.replacementLength} characters from ${completion.replacementOffset}`);
+        const range = new vscode.Range(document.positionAt(completion.replacementOffset), document.positionAt(completion.replacementOffset + completion.replacementLength));
+        console.log(`This will replace '${document.getText(range)}' with '${completion.replacementText}'`);
 
         // Wait 5 seconds to simulate slow server...
         await new Promise((resolve, reject) => setTimeout(resolve, 1000));
